@@ -1,0 +1,97 @@
+<%- include('partials/header') %>
+
+<section class="detail-section">
+  <div class="detail-layout">
+
+    <!-- Left: Artwork + actions -->
+    <div class="detail-left">
+      <div class="detail-art-wrap">
+        <% if (album.artwork) { %>
+          <img src="<%= album.artwork %>" alt="<%= album.title %>" class="detail-art" />
+        <% } else { %>
+          <div class="detail-art detail-art-ph">◉</div>
+        <% } %>
+      </div>
+
+      <% if (!existing) { %>
+      <form action="/journal/add" method="POST" class="add-form">
+        <input type="hidden" name="type"        value="album" />
+        <input type="hidden" name="title"       value="<%= album.title %>" />
+        <input type="hidden" name="artist"      value="<%= album.artist %>" />
+        <input type="hidden" name="artwork"     value="<%= album.artwork %>" />
+        <input type="hidden" name="genre"       value="<%= album.genre %>" />
+        <input type="hidden" name="releaseYear" value="<%= album.releaseYear %>" />
+        <input type="hidden" name="albumId"     value="<%= album.albumId %>" />
+        <input type="hidden" name="trackCount"  value="<%= album.trackCount %>" />
+        <input type="hidden" name="redirectTo"  value="/search/album/<%= album.albumId %>" />
+        <button type="submit" class="btn btn-primary btn-block">+ Add to Journal</button>
+      </form>
+      <% } else { %>
+        <a href="/journal/edit/<%= existing._id %>" class="btn btn-secondary btn-block">✏️ Edit Journal Entry</a>
+        <p class="already-saved">✓ Already in your journal</p>
+      <% } %>
+    </div>
+
+    <!-- Right: Info + tracklist -->
+    <div class="detail-right">
+      <div class="detail-type-badge">Album</div>
+      <h1 class="detail-title"><%= album.title %></h1>
+      <p class="detail-artist"><%= album.artist %></p>
+
+      <div class="detail-chips">
+        <% if (album.releaseYear) { %><span class="detail-chip"><%= album.releaseYear %></span><% } %>
+        <% if (album.genre) { %><span class="detail-chip"><%= album.genre %></span><% } %>
+        <span class="detail-chip"><%= album.trackCount %> tracks</span>
+      </div>
+
+      <!-- MusicBrainz -->
+      <% if (mbArtistInfo) { %>
+      <div class="mb-panel">
+        <p class="mb-panel-title">About the Artist <span class="mb-credit">via MusicBrainz</span></p>
+        <p class="mb-artist-name"><%= mbArtistInfo.name %></p>
+        <% if (mbArtistInfo.disambiguation) { %><p class="mb-dis"><%= mbArtistInfo.disambiguation %></p><% } %>
+        <div class="mb-chips">
+          <% if (mbArtistInfo.type) { %><span class="meta-chip"><%= mbArtistInfo.type %></span><% } %>
+          <% if (mbArtistInfo.country) { %><span class="meta-chip">📍 <%= mbArtistInfo.country %></span><% } %>
+          <% if (mbArtistInfo.area) { %><span class="meta-chip">🏙 <%= mbArtistInfo.area %></span><% } %>
+          <% if (mbArtistInfo.formed) { %><span class="meta-chip">Est. <%= mbArtistInfo.formed %></span><% } %>
+          <% mbArtistInfo.tags.forEach(t => { %><span class="meta-chip tag-chip"><%= t %></span><% }) %>
+        </div>
+      </div>
+      <% } %>
+
+      <!-- Tracklist -->
+      <% if (album.tracks.length > 0) { %>
+      <div class="tracklist">
+        <p class="tracklist-title">Tracklist</p>
+        <% album.tracks.forEach(track => { %>
+        <div class="track-row">
+          <span class="track-num"><%= track.trackNumber %></span>
+          <span class="track-name"><%= track.title %></span>
+          <span class="track-dur"><%= track.duration %></span>
+          <% if (track.previewUrl) { %>
+            <button class="btn-play-sm" data-preview="<%= track.previewUrl %>" title="Preview">▶</button>
+          <% } %>
+        </div>
+        <% }) %>
+      </div>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Audio player bar -->
+  <div class="player-bar" id="playerBar">
+    <audio id="audioPlayer"></audio>
+    <button class="player-play-btn" id="playerPlayBtn">▶</button>
+    <div class="player-info"><span id="playerTitle">—</span></div>
+    <div class="player-progress-wrap"><div class="player-progress" id="playerProgress"></div></div>
+    <button class="player-close" id="playerClose">✕</button>
+  </div>
+
+  <div class="back-row">
+    <a href="/search?kind=album" class="btn btn-ghost">← Back to Search</a>
+    <a href="/journal" class="btn btn-ghost">📓 My Journal</a>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,110 @@
+<%- include('partials/header') %>
+
+<section class="page-section">
+  <h1 class="page-title">My Journal</h1>
+
+  <!-- FILTER FORM -->
+  <form action="/journal" method="GET" class="filter-form">
+    <div class="filter-row">
+      <label class="filter-label">Type:</label>
+      <select name="type" class="filter-select" onchange="this.form.submit()">
+        <option value=""      <%= filters.type === '' ? 'selected' : '' %>>All</option>
+        <option value="song"  <%= filters.type === 'song' ? 'selected' : '' %>>Songs</option>
+        <option value="album" <%= filters.type === 'album' ? 'selected' : '' %>>Albums</option>
+      </select>
+
+      <label class="filter-label">Mood:</label>
+      <select name="mood" class="filter-select" onchange="this.form.submit()">
+        <option value=""           <%= filters.mood === '' ? 'selected' : '' %>>Any Mood</option>
+        <option value="energetic"  <%= filters.mood === 'energetic' ? 'selected' : '' %>>⚡ Energetic</option>
+        <option value="chill"      <%= filters.mood === 'chill' ? 'selected' : '' %>>😌 Chill</option>
+        <option value="melancholic"<%= filters.mood === 'melancholic' ? 'selected' : '' %>>🌧 Melancholic</option>
+        <option value="happy"      <%= filters.mood === 'happy' ? 'selected' : '' %>>😊 Happy</option>
+        <option value="focused"    <%= filters.mood === 'focused' ? 'selected' : '' %>>🎯 Focused</option>
+        <option value="romantic"   <%= filters.mood === 'romantic' ? 'selected' : '' %>>💘 Romantic</option>
+        <option value="angry"      <%= filters.mood === 'angry' ? 'selected' : '' %>>🔥 Angry</option>
+      </select>
+
+      <label class="filter-label">Rating:</label>
+      <select name="rating" class="filter-select" onchange="this.form.submit()">
+        <option value="" <%= filters.rating === '' ? 'selected' : '' %>>Any</option>
+        <option value="5" <%= filters.rating === '5' ? 'selected' : '' %>>★★★★★</option>
+        <option value="4" <%= filters.rating === '4' ? 'selected' : '' %>>★★★★☆</option>
+        <option value="3" <%= filters.rating === '3' ? 'selected' : '' %>>★★★☆☆</option>
+        <option value="2" <%= filters.rating === '2' ? 'selected' : '' %>>★★☆☆☆</option>
+        <option value="1" <%= filters.rating === '1' ? 'selected' : '' %>>★☆☆☆☆</option>
+      </select>
+
+      <label class="filter-label">Sort:</label>
+      <select name="sort" class="filter-select" onchange="this.form.submit()">
+        <option value=""        <%= filters.sort === '' ? 'selected' : '' %>>Recent</option>
+        <option value="oldest"  <%= filters.sort === 'oldest' ? 'selected' : '' %>>Oldest</option>
+        <option value="title"   <%= filters.sort === 'title' ? 'selected' : '' %>>Title A–Z</option>
+        <option value="artist"  <%= filters.sort === 'artist' ? 'selected' : '' %>>Artist A–Z</option>
+        <option value="rating"  <%= filters.sort === 'rating' ? 'selected' : '' %>>Top Rated</option>
+      </select>
+
+      <a href="/journal" class="btn btn-ghost btn-sm">Reset</a>
+    </div>
+  </form>
+
+  <% if (entries.length === 0) { %>
+    <div class="empty-state">
+      <p class="empty-icon">📓</p>
+      <p>Nothing here yet.<br/><a href="/search">Discover some music to save!</a></p>
+    </div>
+  <% } else { %>
+    <p class="result-count"><strong><%= entries.length %></strong> entr<%= entries.length === 1 ? 'y' : 'ies' %></p>
+
+    <div class="journal-grid">
+      <% entries.forEach(entry => { %>
+      <div class="journal-card">
+        <a href="<%= entry.type === 'song' ? '/search/preview/' + entry.trackId : '/search/album/' + entry.albumId %>" class="journal-card-art-link">
+          <% if (entry.artwork) { %>
+            <img src="<%= entry.artwork %>" alt="<%= entry.title %>" class="journal-art" />
+          <% } else { %>
+            <div class="journal-art journal-art-ph"><%= entry.type === 'song' ? '♪' : '◉' %></div>
+          <% } %>
+          <span class="type-pill type-<%= entry.type %>"><%= entry.type %></span>
+        </a>
+        <div class="journal-card-body">
+          <div class="journal-card-top">
+            <div>
+              <p class="journal-title">
+                <a href="<%= entry.type === 'song' ? '/search/preview/' + entry.trackId : '/search/album/' + entry.albumId %>"><%= entry.title %></a>
+              </p>
+              <p class="journal-artist"><%= entry.artist %></p>
+              <p class="journal-meta"><%= entry.genre %><% if (entry.releaseYear) { %> &bull; <%= entry.releaseYear %><% } %></p>
+            </div>
+            <div class="journal-card-actions">
+              <a href="/journal/edit/<%= entry._id %>" class="btn btn-sm btn-secondary">Edit</a>
+              <form action="/journal/delete/<%= entry._id %>" method="POST" onsubmit="return confirm('Remove from journal?')" style="display:inline">
+                <button type="submit" class="btn btn-sm btn-danger">✕</button>
+              </form>
+            </div>
+          </div>
+
+          <% if (entry.rating) { %>
+            <p class="journal-stars"><%= '★'.repeat(entry.rating) %><%= '☆'.repeat(5 - entry.rating) %></p>
+          <% } %>
+
+          <% if (entry.mood) { %>
+            <span class="mood-tag mood-<%= entry.mood %>">
+              <%= entry.mood === 'energetic' ? '⚡' : entry.mood === 'chill' ? '😌' : entry.mood === 'melancholic' ? '🌧' : entry.mood === 'happy' ? '😊' : entry.mood === 'focused' ? '🎯' : entry.mood === 'romantic' ? '💘' : '🔥' %>
+              <%= entry.mood %>
+            </span>
+          <% } %>
+
+          <% if (entry.notes) { %>
+            <p class="journal-notes">"<%= entry.notes.length > 120 ? entry.notes.substring(0, 120) + '…' : entry.notes %>"</p>
+          <% } %>
+
+          <p class="journal-date">Added <%= new Date(entry.addedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></p>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

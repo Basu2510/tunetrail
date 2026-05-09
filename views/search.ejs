@@ -1,0 +1,140 @@
+<%- include('partials/header') %>
+
+<section class="page-section">
+  <h1 class="page-title">Discover Music</h1>
+
+  <!-- SEARCH FORM — satisfies form requirement -->
+  <form action="/search" method="GET" class="search-form">
+    <div class="search-bar">
+      <span class="search-icon">⌕</span>
+      <input
+        type="text"
+        name="q"
+        value="<%= q %>"
+        placeholder="Search songs, albums, artists…"
+        class="search-input"
+        autofocus
+        required
+      />
+      <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+    <div class="kind-tabs">
+      <a href="<%= q ? '/search?q=' + encodeURIComponent(q) + '&kind=song' : '/search?kind=song' %>"
+         class="kind-tab <%= kind === 'song' || kind === '' ? 'active' : '' %>">Songs</a>
+      <a href="<%= q ? '/search?q=' + encodeURIComponent(q) + '&kind=album' : '/search?kind=album' %>"
+         class="kind-tab <%= kind === 'album' ? 'active' : '' %>">Albums</a>
+    </div>
+  </form>
+
+  <% if (error) { %>
+    <div class="alert alert-error"><%= error %></div>
+  <% } %>
+
+  <!-- MusicBrainz artist info panel -->
+  <% if (mbArtistInfo && mbArtistInfo.score > 70) { %>
+  <div class="artist-panel">
+    <div class="artist-panel-header">
+      <span class="artist-panel-icon">🎤</span>
+      <div>
+        <p class="artist-panel-name"><%= mbArtistInfo.name %></p>
+        <% if (mbArtistInfo.disambiguation) { %><p class="artist-panel-sub"><%= mbArtistInfo.disambiguation %></p><% } %>
+      </div>
+    </div>
+    <div class="artist-panel-meta">
+      <% if (mbArtistInfo.type) { %><span class="meta-chip"><%= mbArtistInfo.type %></span><% } %>
+      <% if (mbArtistInfo.country) { %><span class="meta-chip">📍 <%= mbArtistInfo.country %></span><% } %>
+      <% if (mbArtistInfo.formed) { %><span class="meta-chip">Since <%= mbArtistInfo.formed %></span><% } %>
+      <% mbArtistInfo.tags.forEach(tag => { %><span class="meta-chip tag-chip"><%= tag %></span><% }) %>
+    </div>
+    <p class="artist-panel-credit">Artist info via <strong>MusicBrainz</strong></p>
+  </div>
+  <% } %>
+
+  <!-- Song results -->
+  <% if (songs.length > 0) { %>
+    <p class="result-count"><strong><%= songs.length %></strong> songs for "<%= q %>"</p>
+    <div class="results-list">
+      <% songs.forEach(song => { %>
+      <div class="result-row">
+        <a href="/search/preview/<%= song.trackId %>" class="result-art-link">
+          <% if (song.artwork) { %>
+            <img src="<%= song.artwork.replace('600x600bb','60x60bb') %>" alt="" class="result-art" />
+          <% } else { %>
+            <div class="result-art result-art-ph">♪</div>
+          <% } %>
+        </a>
+        <div class="result-info">
+          <a href="/search/preview/<%= song.trackId %>" class="result-title"><%= song.title %></a>
+          <p class="result-sub"><%= song.artist %> &bull; <%= song.album %></p>
+          <p class="result-meta"><%= song.genre %> <% if (song.releaseYear) { %>&bull; <%= song.releaseYear %><% } %> <% if (song.duration) { %>&bull; <%= song.duration %><% } %></p>
+        </div>
+        <div class="result-actions">
+          <% if (song.previewUrl) { %>
+            <button class="btn-play" data-preview="<%= song.previewUrl %>" title="Preview">▶</button>
+          <% } %>
+          <% if (savedTrackIds.has(song.trackId)) { %>
+            <span class="saved-label">✓ Saved</span>
+          <% } else { %>
+            <form action="/journal/add" method="POST" class="inline-form">
+              <input type="hidden" name="type"       value="song" />
+              <input type="hidden" name="title"      value="<%= song.title %>" />
+              <input type="hidden" name="artist"     value="<%= song.artist %>" />
+              <input type="hidden" name="artwork"    value="<%= song.artwork %>" />
+              <input type="hidden" name="genre"      value="<%= song.genre %>" />
+              <input type="hidden" name="releaseYear" value="<%= song.releaseYear %>" />
+              <input type="hidden" name="trackId"    value="<%= song.trackId %>" />
+              <input type="hidden" name="albumName"  value="<%= song.album %>" />
+              <input type="hidden" name="previewUrl" value="<%= song.previewUrl %>" />
+              <input type="hidden" name="durationMs" value="<%= song.durationMs %>" />
+              <input type="hidden" name="redirectTo" value="/search?q=<%= encodeURIComponent(q) %>&kind=song" />
+              <button type="submit" class="btn btn-sm btn-add">+ Add</button>
+            </form>
+          <% } %>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <!-- Album results -->
+  <% if (albums.length > 0) { %>
+    <p class="result-count"><strong><%= albums.length %></strong> albums for "<%= q %>"</p>
+    <div class="card-grid">
+      <% albums.forEach(album => { %>
+      <a href="/search/album/<%= album.albumId %>" class="music-card">
+        <div class="music-card-art">
+          <% if (album.artwork) { %>
+            <img src="<%= album.artwork %>" alt="<%= album.title %>" loading="lazy" />
+          <% } else { %>
+            <div class="art-placeholder">◉</div>
+          <% } %>
+          <% if (savedAlbumIds.has(album.albumId)) { %>
+            <span class="saved-overlay">✓</span>
+          <% } %>
+          <span class="type-pill type-album">album</span>
+        </div>
+        <div class="music-card-info">
+          <p class="card-title"><%= album.title %></p>
+          <p class="card-artist"><%= album.artist %></p>
+          <p class="card-meta"><%= album.releaseYear %> &bull; <%= album.trackCount %> tracks</p>
+        </div>
+      </a>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <!-- Audio player bar (hidden until preview plays) -->
+  <div class="player-bar" id="playerBar">
+    <audio id="audioPlayer"></audio>
+    <button class="player-play-btn" id="playerPlayBtn">▶</button>
+    <div class="player-info">
+      <span id="playerTitle">—</span>
+    </div>
+    <div class="player-progress-wrap">
+      <div class="player-progress" id="playerProgress"></div>
+    </div>
+    <button class="player-close" id="playerClose">✕</button>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

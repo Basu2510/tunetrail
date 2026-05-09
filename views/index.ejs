@@ -1,0 +1,118 @@
+<%- include('partials/header') %>
+
+<section class="hero">
+  <div class="hero-content">
+    <p class="hero-eyebrow">Your personal music journal</p>
+    <h1 class="hero-title">Leave a trail of<br/><em>every sound</em><br/>that moves you.</h1>
+    <p class="hero-sub">Search millions of songs and albums. Rate them, tag your mood, write your thoughts. Your music, your memory.</p>
+    <div class="hero-actions">
+      <a href="/search" class="btn btn-primary btn-lg">Start Discovering</a>
+      <a href="/journal" class="btn btn-ghost btn-lg">My Journal</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="vinyl-wrap">
+      <div class="vinyl">
+        <div class="vinyl-label">
+          <span class="vinyl-note">♪</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Bar -->
+<section class="stats-bar">
+  <div class="stat-item">
+    <span class="stat-num"><%= stats.totalCount %></span>
+    <span class="stat-lbl">Entries</span>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat-item">
+    <span class="stat-num"><%= stats.songCount %></span>
+    <span class="stat-lbl">Songs</span>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat-item">
+    <span class="stat-num"><%= stats.albumCount %></span>
+    <span class="stat-lbl">Albums</span>
+  </div>
+  <% if (genreAgg.length > 0) { %>
+  <div class="stat-divider"></div>
+  <div class="stat-item">
+    <span class="stat-num genre-stat"><%= genreAgg[0]._id %></span>
+    <span class="stat-lbl">Top Genre</span>
+  </div>
+  <% } %>
+</section>
+
+<!-- Recently Added -->
+<% if (recentEntries.length > 0) { %>
+<section class="home-section">
+  <div class="section-header">
+    <h2 class="section-title">Recently Added</h2>
+    <a href="/journal" class="section-link">View all →</a>
+  </div>
+  <div class="card-grid">
+    <% recentEntries.forEach(entry => { %>
+    <a href="<%= entry.type === 'song' ? '/search/preview/' + entry.trackId : '/search/album/' + entry.albumId %>" class="music-card">
+      <div class="music-card-art">
+        <% if (entry.artwork) { %>
+          <img src="<%= entry.artwork %>" alt="<%= entry.title %>" loading="lazy" />
+        <% } else { %>
+          <div class="art-placeholder"><%= entry.type === 'song' ? '♪' : '◉' %></div>
+        <% } %>
+        <span class="type-pill type-<%= entry.type %>"><%= entry.type %></span>
+      </div>
+      <div class="music-card-info">
+        <p class="card-title"><%= entry.title %></p>
+        <p class="card-artist"><%= entry.artist %></p>
+        <% if (entry.rating) { %>
+          <p class="card-rating"><%= '★'.repeat(entry.rating) %><%= '☆'.repeat(5 - entry.rating) %></p>
+        <% } %>
+      </div>
+    </a>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<!-- Top Rated -->
+<% if (topRated.length > 0) { %>
+<section class="home-section">
+  <div class="section-header">
+    <h2 class="section-title">Top Rated</h2>
+    <a href="/journal?sort=rating" class="section-link">See all →</a>
+  </div>
+  <div class="top-rated-list">
+    <% topRated.forEach((entry, i) => { %>
+    <div class="top-rated-row">
+      <span class="rank-num">#<%= i + 1 %></span>
+      <% if (entry.artwork) { %>
+        <img src="<%= entry.artwork %>" alt="" class="rank-art" />
+      <% } else { %>
+        <div class="rank-art rank-art-placeholder">♪</div>
+      <% } %>
+      <div class="rank-info">
+        <p class="rank-title"><%= entry.title %></p>
+        <p class="rank-artist"><%= entry.artist %></p>
+      </div>
+      <span class="rank-stars"><%= '★'.repeat(entry.rating) %></span>
+    </div>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<% if (stats.totalCount === 0) { %>
+<section class="empty-hero">
+  <div class="empty-hero-inner">
+    <p class="empty-icon">🎵</p>
+    <h2>Your journal is empty</h2>
+    <p>Search for your favorite songs and albums to get started.</p>
+    <a href="/search" class="btn btn-primary">Discover Music</a>
+  </div>
+</section>
+<% } %>
+
+<%- include('partials/footer') %>

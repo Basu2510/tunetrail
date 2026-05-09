@@ -1,0 +1,8 @@
+<%- include('partials/header') %>
+<section class="page-section error-page">
+  <p class="error-code">500</p>
+  <p class="error-msg">Something went wrong.</p>
+  <% if (message) { %><p class="error-detail"><%= message %></p><% } %>
+  <a href="/" class="btn btn-primary">← Go Home</a>
+</section>
+<%- include('partials/footer') %>
