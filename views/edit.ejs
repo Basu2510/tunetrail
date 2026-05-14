@@ -1,4 +1,4 @@
-<%- include('partials/header') %>
+<!-- <%- include('partials/header') %>
 
 <section class="page-section page-section--narrow">
   <div class="edit-header">
@@ -14,7 +14,6 @@
     </div>
   </div>
 
-  <!-- EDIT FORM — satisfies form requirement -->
   <form action="/journal/edit/<%= entry._id %>" method="POST" class="edit-form">
 
     <div class="form-group">
@@ -70,6 +69,91 @@
       <a href="/journal" class="btn btn-ghost">Cancel</a>
     </div>
   </form>
+</section>
+
+<%- include('partials/footer') %> -->
+
+
+<%- include('partials/header') %>
+
+<section class="page-section page-section--narrow">
+  <div class="edit-header">
+    <% if (entry.artwork) { %>
+      <img src="<%= entry.artwork %>" alt="" class="edit-art" />
+    <% } else { %>
+      <div class="edit-art edit-art-ph"><%= entry.type === 'song' ? '♪' : '◉' %></div>
+    <% } %>
+    <div>
+      <p class="edit-type"><%= entry.type %></p>
+      <h1 class="edit-title"><%= entry.title %></h1>
+      <p class="edit-artist"><%= entry.artist %></p>
+    </div>
+  </div>
+
+  <!-- EDIT FORM -->
+  <form action="/journal/edit/<%= entry._id %>" method="POST" class="edit-form">
+
+    <div class="form-group">
+      <label class="form-label">My Rating</label>
+      <div class="star-picker" id="starPicker">
+        <% for (let i = 1; i <= 5; i++) { %>
+          <button type="button" class="star-btn <%= entry.rating >= i ? 'active' : '' %>" data-val="<%= i %>">★</button>
+        <% } %>
+        <input type="hidden" name="rating" id="ratingInput" value="<%= entry.rating || '' %>" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="mood">Mood</label>
+      <select name="mood" id="mood" class="form-select">
+        <option value=""            <%= entry.mood === '' ? 'selected' : '' %>>— No mood tag —</option>
+        <option value="energetic"   <%= entry.mood === 'energetic' ? 'selected' : '' %>>⚡ Energetic</option>
+        <option value="chill"       <%= entry.mood === 'chill' ? 'selected' : '' %>>😌 Chill</option>
+        <option value="melancholic" <%= entry.mood === 'melancholic' ? 'selected' : '' %>>🌧 Melancholic</option>
+        <option value="happy"       <%= entry.mood === 'happy' ? 'selected' : '' %>>😊 Happy</option>
+        <option value="focused"     <%= entry.mood === 'focused' ? 'selected' : '' %>>🎯 Focused</option>
+        <option value="romantic"    <%= entry.mood === 'romantic' ? 'selected' : '' %>>💘 Romantic</option>
+        <option value="angry"       <%= entry.mood === 'angry' ? 'selected' : '' %>>🔥 Angry</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="listenedOn">Last Listened</label>
+      <input
+        type="date"
+        name="listenedOn"
+        id="listenedOn"
+        value="<%= entry.listenedOn ? new Date(entry.listenedOn).toISOString().split('T')[0] : '' %>"
+        class="form-input"
+      />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="notes">My Notes</label>
+      <textarea
+        name="notes"
+        id="notes"
+        rows="5"
+        maxlength="1000"
+        placeholder="What do you love about this? A memory it brings back? Thoughts on the lyrics…"
+        class="form-textarea"
+      ><%= entry.notes || '' %></textarea>
+      <span class="char-count"><span id="noteCount"><%= (entry.notes || '').length %></span> / 1000</span>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Save</button>
+      <a href="/journal" class="btn btn-ghost">Cancel</a>
+    </div>
+  </form>
+
+  <!-- Remove entry -->
+  <div class="delete-section">
+    <p class="delete-label">Want to remove this from your journal?</p>
+    <form action="/journal/delete/<%= entry._id %>" method="POST" onsubmit="return confirm('Remove this from your journal? This cannot be undone.')">
+      <button type="submit" class="btn btn-danger-full">Remove from Journal</button>
+    </form>
+  </div>
 </section>
 
 <%- include('partials/footer') %>
