@@ -6,7 +6,6 @@ const Entry = require('../models/Entry');
 const ITUNES_BASE     = 'https://itunes.apple.com/search';
 const MUSICBRAINZ_BASE = 'https://musicbrainz.org/ws/2';
 
-// Helper: format ms duration to m:ss
 function formatDuration(ms) {
   if (!ms) return '';
   const totalSec = Math.floor(ms / 1000);
@@ -15,13 +14,11 @@ function formatDuration(ms) {
   return `${min}:${sec.toString().padStart(2, '0')}`;
 }
 
-// Helper: get high-res artwork from iTunes (replace 100x100 with 600x600)
 function bigArtwork(url) {
   if (!url) return '';
   return url.replace('100x100bb', '600x600bb');
 }
 
-// GET /search — search form + results
 router.get('/', async (req, res, next) => {
   try {
     const { q, kind } = req.query;
@@ -34,7 +31,6 @@ router.get('/', async (req, res, next) => {
       const mediaType = (!kind || kind === 'song') ? 'music' : 'music';
       const entity    = (!kind || kind === 'song') ? 'song' : 'album';
 
-      // iTunes Search API call
       const itunesUrl = `${ITUNES_BASE}?term=${encodeURIComponent(q)}&media=music&entity=${entity}&limit=20`;
       const itunesRes = await fetch(itunesUrl, {
         headers: { 'User-Agent': 'TuneTrail/1.0' }
@@ -68,8 +64,6 @@ router.get('/', async (req, res, next) => {
           }));
       }
 
-      // MusicBrainz API — fetch artist info for the first result
-      // This satisfies using multiple APIs
       try {
         const firstArtist = songs[0]?.artist || albums[0]?.artist || '';
         if (firstArtist) {
@@ -95,7 +89,6 @@ router.get('/', async (req, res, next) => {
           }
         }
       } catch (mbErr) {
-        // MusicBrainz is optional — don't crash if it fails
         console.warn('MusicBrainz fetch failed:', mbErr.message);
       }
 
@@ -104,7 +97,6 @@ router.get('/', async (req, res, next) => {
       }
     }
 
-    // Get saved IDs for "Already in journal" badges
     const savedEntries = await Entry.find({}, 'trackId albumId type').lean();
     const savedTrackIds = new Set(savedEntries.filter(e => e.type === 'song').map(e => e.trackId));
     const savedAlbumIds = new Set(savedEntries.filter(e => e.type === 'album').map(e => e.albumId));
@@ -154,7 +146,7 @@ router.get('/preview/:trackId', async (req, res, next) => {
           disambiguation: a.disambiguation || ''
         };
       }
-    } catch (e) { /* optional */ }
+    } catch (e) { }
 
     const existing = await Entry.findOne({ trackId: String(trackId), type: 'song' });
 
@@ -215,7 +207,7 @@ router.get('/album/:albumId', async (req, res, next) => {
           disambiguation: a.disambiguation || ''
         };
       }
-    } catch (e) { /* optional */ }
+    } catch (e) { }
 
     const existing = await Entry.findOne({ albumId: String(albumId), type: 'album' });
 

@@ -3,7 +3,6 @@
 <section class="page-section">
   <h1 class="page-title">Discover Music</h1>
 
-  <!-- SEARCH FORM — satisfies form requirement -->
   <form action="/search" method="GET" class="search-form">
     <div class="search-bar">
       <span class="search-icon">⌕</span>
@@ -30,7 +29,6 @@
     <div class="alert alert-error"><%= error %></div>
   <% } %>
 
-  <!-- MusicBrainz artist info panel -->
   <% if (mbArtistInfo && mbArtistInfo.score > 70) { %>
   <div class="artist-panel">
     <div class="artist-panel-header">
@@ -50,7 +48,6 @@
   </div>
   <% } %>
 
-  <!-- Song results -->
   <% if (songs.length > 0) { %>
     <p class="result-count"><strong><%= songs.length %></strong> songs for "<%= q %>"</p>
     <div class="results-list">
@@ -96,7 +93,6 @@
     </div>
   <% } %>
 
-  <!-- Album results -->
   <% if (albums.length > 0) { %>
     <p class="result-count"><strong><%= albums.length %></strong> albums for "<%= q %>"</p>
     <div class="card-grid">
@@ -123,7 +119,6 @@
     </div>
   <% } %>
 
-  <!-- Audio player bar (hidden until preview plays) -->
   <div class="player-bar" id="playerBar">
     <audio id="audioPlayer"></audio>
     <button class="player-play-btn" id="playerPlayBtn">▶</button>

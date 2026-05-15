@@ -3,7 +3,6 @@
 <section class="detail-section">
   <div class="detail-layout">
 
-    <!-- Left: Artwork + actions -->
     <div class="detail-left">
       <div class="detail-art-wrap">
         <% if (song.artwork) { %>
@@ -18,7 +17,6 @@
         <% } %>
       </div>
 
-      <!-- Add to journal form -->
       <% if (!existing) { %>
       <form action="/journal/add" method="POST" class="add-form">
         <input type="hidden" name="type"       value="song" />
@@ -40,7 +38,6 @@
       <% } %>
     </div>
 
-    <!-- Right: Info -->
     <div class="detail-right">
       <div class="detail-type-badge">Song</div>
       <h1 class="detail-title"><%= song.title %></h1>
@@ -54,7 +51,6 @@
         <% if (song.trackNumber) { %><span class="detail-chip">Track <%= song.trackNumber %><% if (song.trackCount) { %>/<%= song.trackCount %><% } %></span><% } %>
       </div>
 
-      <!-- MusicBrainz Artist Info -->
       <% if (mbArtistInfo) { %>
       <div class="mb-panel">
         <p class="mb-panel-title">About the Artist <span class="mb-credit">via MusicBrainz</span></p>
@@ -72,7 +68,6 @@
     </div>
   </div>
 
-  <!-- Audio player bar -->
   <div class="player-bar" id="playerBar">
     <audio id="audioPlayer"></audio>
     <button class="player-play-btn" id="playerPlayBtn">▶</button>

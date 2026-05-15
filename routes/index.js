@@ -8,17 +8,14 @@ router.get('/', async (req, res, next) => {
     const songCount    = await Entry.countDocuments({ type: 'song' });
     const albumCount   = await Entry.countDocuments({ type: 'album' });
 
-    // Top genres
     const genreAgg = await Entry.aggregate([
       { $group: { _id: '$genre', count: { $sum: 1 } } },
       { $sort: { count: -1 } },
       { $limit: 5 }
     ]);
 
-    // Recent entries
     const recentEntries = await Entry.find().sort({ addedAt: -1 }).limit(6);
 
-    // Top rated
     const topRated = await Entry.find({ rating: { $ne: null } })
       .sort({ rating: -1, addedAt: -1 })
       .limit(4);

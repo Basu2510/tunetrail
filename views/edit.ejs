@@ -14,7 +14,6 @@
     </div>
   </div>
 
-  <!-- EDIT FORM -->
   <form action="/journal/edit/<%= entry._id %>" method="POST" class="edit-form">
 
     <div class="form-group">
@@ -71,7 +70,6 @@
     </div>
   </form>
 
-  <!-- Remove entry -->
   <div class="delete-section">
     <p class="delete-label">Want to remove this from your journal?</p>
     <form action="/journal/delete/<%= entry._id %>" method="POST" onsubmit="return confirm('Remove this from your journal? This cannot be undone.')">

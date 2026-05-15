@@ -1,6 +1,3 @@
-// TuneTrail — client-side JS
-
-// ── Active nav link ────────────────────────────────────────
 const currentPath = window.location.pathname;
 document.querySelectorAll('.nav-link').forEach(link => {
   const href = link.getAttribute('href');
@@ -9,7 +6,6 @@ document.querySelectorAll('.nav-link').forEach(link => {
   }
 });
 
-// ── Audio preview player ───────────────────────────────────
 const audio       = document.getElementById('audioPlayer');
 const playerBar   = document.getElementById('playerBar');
 const playerTitle = document.getElementById('playerTitle');
@@ -57,7 +53,6 @@ if (audio) {
   });
 }
 
-// Attach play buttons (search results list)
 document.querySelectorAll('.btn-play').forEach(btn => {
   btn.addEventListener('click', () => {
     const url   = btn.dataset.preview;
@@ -66,7 +61,6 @@ document.querySelectorAll('.btn-play').forEach(btn => {
   });
 });
 
-// Attach play buttons (tracklist)
 document.querySelectorAll('.btn-play-sm').forEach(btn => {
   btn.addEventListener('click', () => {
     const url   = btn.dataset.preview;
@@ -75,7 +69,6 @@ document.querySelectorAll('.btn-play-sm').forEach(btn => {
   });
 });
 
-// Big preview button (detail page)
 const bigPreviewBtn = document.querySelector('.btn-preview-big');
 if (bigPreviewBtn) {
   bigPreviewBtn.addEventListener('click', () => {
@@ -90,7 +83,6 @@ if (bigPreviewBtn) {
   });
 }
 
-// ── Star picker (edit page) ────────────────────────────────
 const starPicker   = document.getElementById('starPicker');
 const ratingInput  = document.getElementById('ratingInput');
 
@@ -118,7 +110,6 @@ if (starPicker && ratingInput) {
   });
 }
 
-// ── Notes char counter ─────────────────────────────────────
 const noteArea  = document.getElementById('notes');
 const noteCount = document.getElementById('noteCount');
 if (noteArea && noteCount) {
@@ -127,7 +118,6 @@ if (noteArea && noteCount) {
   });
 }
 
-// ── Flash toast for ?added=true ────────────────────────────
 const params = new URLSearchParams(window.location.search);
 if (params.get('added') === 'true') {
   const toast = document.createElement('div');
