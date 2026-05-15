@@ -8,7 +8,7 @@ App Description: A personal music journal where users search for songs and album
 
 YouTube Video Link: [https://www.youtube.com/watch?v=W9xV_WgkhFM](https://www.youtube.com/watch?v=W9xV_WgkhFM)
 
-APIs: iTunes Search API [https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/](https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/), MusicBrainz API [https://musicbrainz.org/doc/MusicBrainz_API](https://musicbrainz.org/doc/MusicBrainz_API)
+APIs: iTunes Search API (https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/), MusicBrainz API (https://musicbrainz.org/doc/MusicBrainz_API)
 
 Contact Email: abasu1@terpmail.umd.edu
 
