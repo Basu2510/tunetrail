@@ -2231,20 +2231,32 @@ body {
 }
 
 .journal-card-top {
+  /* display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem; */
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 0.5rem;
   margin-bottom: 0.4rem;
+  flex-wrap: nowrap;
 }
 
 .journal-title {
-  font-size: 0.9rem;
+  /* font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: ellipsis; */
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
 }
 .journal-title a { color: inherit; text-decoration: none; }
 .journal-title a:hover { color: var(--accent); }
